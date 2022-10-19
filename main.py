@@ -41,6 +41,7 @@ def get_req_insert():
 """
     req_update_products = ""
     suppliers_id = 0
+    row2 = ""
     for each_row in list_suppliers:
         # дербаним построчно на значения полей
         suppliers_id += 1
@@ -57,20 +58,20 @@ def get_req_insert():
         phone = each_row['phone'].replace("'", "''")
         fax = each_row['fax'].replace("'", "''")
         homepage = each_row['homepage'].replace("'", "''")
-        products = each_row['products']
-        list_good_products = []
-        for each_product in products:
-            product = each_product.replace("'", "''")
-            row = f"""
-            UPDATE products  SET suppliers_id={suppliers_id}  WHERE product_name='{product}';"""  # заполнение идешек
-            req_update_products += row
+        list_products = each_row['products']
 
-            list_good_products.append(product)  # сформируем список с экранированными кавычками
-        str_products = ",".join(list_good_products)  # преобразуем в строку
+        list_good_products =[each_product.replace("'", "''") for each_product in list_products]
+
+        products = "','".join(list_good_products)
+        row2 += f"""
+            UPDATE products  SET suppliers_id={suppliers_id}  WHERE product_name IN ('{products}');"""  # заполнение идешек
+
+        str_products = ",".join(list_good_products)
         row = f"""
             INSERT INTO suppliers VALUES ({suppliers_id},'{company_name}','{contact_1}','{contact_2}','{country}','{state}','{index}','{city}','{other}','{phone}','{fax}','{homepage}','{str_products}');"""
         req += row
     req += req_update_products
+    req += row2
     req += f"""
     
             ALTER TABLE ONLY suppliers

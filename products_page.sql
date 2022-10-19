@@ -9,4 +9,4 @@ FROM products
 	LEFT JOIN suppliers ON suppliers.suppliers_id = products.suppliers_id
 WHERE 
 	discontinued=0 
-	AND units_in_stock-units_on_order >= 20
+	AND units_in_stock-units_on_order < 20
